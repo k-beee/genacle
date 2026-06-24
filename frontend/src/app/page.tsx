@@ -1,7 +1,6 @@
 'use client';
 
 import { useMemo, useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { Scale, Search, Gavel } from 'lucide-react';
 import { Header } from '../components/Header';
 import { Hero } from '../components/Hero';
