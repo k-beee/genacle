@@ -2,7 +2,7 @@
 
 *An autonomous legal tribunal that lives entirely on-chain on GenLayer. Parties file disputes citing agreement terms and arguments; when evidence is submitted, a decentralized consensus of validator AI jurors resolves the case. No middlemen, no custody, network fees only.*
 
-Genacle is sitting live at [k-beee.github.io/genacle](https://k-beee.github.io/genacle/).
+Genacle is sitting live at [k-beee.github.io/genacle](https://k-beee.github.io/genacle/), reading and writing to contract [`0xd23D6E…5ACe`](https://explorer-bradbury.genlayer.com/address/0xd23D6E7688942FeB5e58aca3f5700b98921E5ACe) on GenLayer Bradbury.
 
 ---
 

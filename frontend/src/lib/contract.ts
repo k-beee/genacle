@@ -2,9 +2,7 @@ import { createClient } from 'genlayer-js';
 import { testnetBradbury } from 'genlayer-js/chains';
 import type { GenLayerClient } from 'genlayer-js/types';
 
-// The user will provide the contract address upon deployment.
-// Using a placeholder address for now, which can be overwritten in deployment.json or here.
-export const CONTRACT_ADDRESS = '0x0000000000000000000000000000000000000000' as const;
+export const CONTRACT_ADDRESS = '0xd23D6E7688942FeB5e58aca3f5700b98921E5ACe' as const;
 export const EXPLORER = 'https://explorer-bradbury.genlayer.com';
 export const FAUCET = 'https://testnet-faucet.genlayer.foundation/';
 export const CHAIN_ID = 4221;
