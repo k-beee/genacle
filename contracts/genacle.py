@@ -2,6 +2,10 @@
 from genlayer import *
 import json
 
+# Genacle is a decentralized AI arbitration court that resolves disputes
+# under validator consensus. Rulings can be CLAIMANT_WIN, RESPONDENT_WIN, or DISMISSED.
+
+
 ERROR_EXPECTED = "[EXPECTED]"
 ERROR_TRANSIENT = "[TRANSIENT]"
 ERROR_LLM = "[LLM_ERROR]"
