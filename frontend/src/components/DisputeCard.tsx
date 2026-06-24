@@ -72,7 +72,7 @@ export function DisputeCard({ dispute, onSelect, onResolve }: DisputeCardProps) 
           <button
             type="button"
             onClick={() => onResolve(dispute)}
-            className="flex-1 inline-flex items-center justify-center gap-1.5 border border-gold/45 bg-gold/10 hover:bg-gold hover:text-navy-950 py-2.5 font-mono text-[10px] uppercase tracking-wider text-gold transition-all text-center"
+            className="flex-1 inline-flex items-center justify-center gap-1.5 border border-gold/50 text-gold bg-transparent hover:bg-gold hover:text-navy-950 py-2.5 font-mono text-[10px] uppercase tracking-wider transition-colors duration-200 text-center"
           >
             <Gavel size={11} />
             Resolve Case

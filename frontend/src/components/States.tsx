@@ -44,7 +44,7 @@ export function EmptyState({ onOpen }: EmptyStateProps) {
       <button
         type="button"
         onClick={onOpen}
-        className="mt-6 border border-gold/50 bg-gold px-6 py-3 font-mono text-[10px] uppercase tracking-wider text-navy-950 font-bold hover:bg-gold/90 transition-colors"
+        className="mt-6 border border-gold/50 text-gold bg-transparent hover:bg-gold hover:text-navy-950 px-6 py-3 font-mono text-[10px] uppercase tracking-wider transition-colors duration-200"
       >
         File the First Case
       </button>

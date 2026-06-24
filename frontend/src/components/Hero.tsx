@@ -34,7 +34,7 @@ export function Hero({ onOpen, stats }: HeroProps) {
                 <button
                   type="button"
                   onClick={onOpen}
-                  className="group relative inline-flex items-center gap-3 overflow-hidden border border-gold/50 bg-gold px-8 py-4 font-mono text-xs uppercase tracking-widest text-navy-950 font-bold transition-all hover:bg-gold/90 focus:outline-none focus:ring-2 focus:ring-gold"
+                  className="group relative inline-flex items-center gap-3 overflow-hidden border border-gold/50 text-gold bg-transparent hover:bg-gold hover:text-navy-950 px-8 py-4 font-mono text-xs uppercase tracking-widest transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gold"
                 >
                   <Gavel size={15} className="transition-transform group-hover:rotate-12" />
                   File a Dispute Case

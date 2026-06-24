@@ -101,7 +101,7 @@ export function DisputeModal({
               <button
                 type="button"
                 onClick={onConnect}
-                className="mt-6 border border-gold/50 bg-gold px-6 py-3 font-mono text-[11px] uppercase tracking-wider text-navy-950 font-bold hover:bg-gold/90 transition-colors"
+                className="mt-6 border border-gold/50 text-gold bg-transparent hover:bg-gold hover:text-navy-950 px-6 py-3 font-mono text-[11px] uppercase tracking-wider transition-colors duration-200"
               >
                 Connect Wallet
               </button>
@@ -150,7 +150,7 @@ export function DisputeModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="mt-8 border border-gold/40 hover:border-gold px-8 py-3 font-mono text-xs uppercase tracking-wider text-gold hover:bg-gold/5"
+                className="mt-8 border border-gold/50 text-gold bg-transparent hover:bg-gold hover:text-navy-950 px-8 py-3 font-mono text-xs uppercase tracking-wider transition-colors duration-200"
               >
                 Close Panel
               </button>
@@ -240,7 +240,7 @@ export function DisputeModal({
                   <div className="border-t border-gold/10 pt-6 flex justify-end">
                     <button
                       type="submit"
-                      className="inline-flex items-center gap-2 border border-gold/50 bg-gold px-8 py-3.5 font-mono text-xs uppercase tracking-wider text-navy-950 font-bold hover:bg-gold/90 transition-colors"
+                      className="inline-flex items-center gap-2 border border-gold/50 text-gold bg-transparent hover:bg-gold hover:text-navy-950 px-8 py-3.5 font-mono text-xs uppercase tracking-wider transition-colors duration-200"
                     >
                       <Send size={13} />
                       File Dispute Case
@@ -275,7 +275,7 @@ export function DisputeModal({
                   <div className="border-t border-gold/10 pt-6 flex justify-end">
                     <button
                       type="submit"
-                      className="inline-flex items-center gap-2 border border-gold/50 bg-gold px-8 py-3.5 font-mono text-xs uppercase tracking-wider text-navy-950 font-bold hover:bg-gold/90 transition-colors"
+                      className="inline-flex items-center gap-2 border border-gold/50 text-gold bg-transparent hover:bg-gold hover:text-navy-950 px-8 py-3.5 font-mono text-xs uppercase tracking-wider transition-colors duration-200"
                     >
                       <Gavel size={14} />
                       Submit for Deliberation

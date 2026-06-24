@@ -12,32 +12,14 @@ import { Footer } from '../components/Footer';
 import { useWallet } from '../hooks/useWallet';
 import { useContractData } from '../hooks/useContractData';
 import { useTransaction } from '../hooks/useTransaction';
-import type { Dispute } from '../lib/contract';
+import { CONTRACT_ADDRESS, type Dispute } from '../lib/contract';
 
 type Filter = 'ALL' | 'PENDING' | 'CLAIMANT_WIN' | 'RESPONDENT_WIN' | 'DISMISSED';
 
 export default function Home() {
   const wallet = useWallet();
   
-  // Back contractAddr with local storage so it persists between reloads
-  const [contractAddr, setContractAddr] = useState<string>('');
-
-  useEffect(() => {
-    // Try to load from deployment.json first if exists, otherwise fallback to localstorage
-    const stored = localStorage.getItem('genacle_contract_addr');
-    if (stored) {
-      setContractAddr(stored);
-    } else {
-      // Fallback placeholder address
-      setContractAddr('0x0000000000000000000000000000000000000000');
-    }
-  }, []);
-
-  const handleContractAddrChange = (newAddr: string) => {
-    setContractAddr(newAddr);
-    localStorage.setItem('genacle_contract_addr', newAddr);
-  };
-
+  const contractAddr = CONTRACT_ADDRESS;
   const data = useContractData(contractAddr);
   const txApi = useTransaction(contractAddr, () => {
     void data.refresh();
@@ -108,8 +90,6 @@ export default function Home() {
         <Header
           wallet={wallet}
           onOpen={openFileModal}
-          contractAddr={contractAddr}
-          onContractAddrChange={handleContractAddrChange}
         />
         
         <Hero onOpen={openFileModal} stats={data.derived} />
@@ -160,15 +140,7 @@ export default function Home() {
 
             {/* List */}
             <div className="mt-12">
-              {contractAddr === '0x0000000000000000000000000000000000000000' ? (
-                <div className="relative border border-dashed border-gold/20 bg-navy-900/30 px-6 py-14 text-center rounded-lg max-w-xl mx-auto">
-                  <div className="absolute inset-1.5 border border-double border-gold/5 rounded pointer-events-none" />
-                  <h3 className="font-serif text-lg text-gold">Deployment Required</h3>
-                  <p className="mt-2 text-xs text-slatey">
-                    Please deploy the Intelligent Contract and enter the address in the header bar configuration input to read dock files.
-                  </p>
-                </div>
-              ) : data.loading ? (
+              {data.loading ? (
                 <Skeleton />
               ) : data.error ? (
                 <ErrorState message={data.error} onRetry={() => data.refresh()} />
@@ -207,7 +179,7 @@ export default function Home() {
               <button
                 type="button"
                 onClick={openFileModal}
-                className="z-10 shrink-0 border border-gold bg-gold px-8 py-3.5 font-mono text-xs uppercase tracking-widest text-navy-950 font-bold hover:bg-gold/90 transition-transform hover:-translate-y-0.5"
+                className="z-10 shrink-0 border border-gold/50 text-gold bg-transparent hover:bg-gold hover:text-navy-950 px-8 py-3.5 font-mono text-xs uppercase tracking-widest transition-all duration-200 hover:-translate-y-0.5"
               >
                 File Case Dossier
               </button>
