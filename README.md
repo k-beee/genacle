@@ -90,4 +90,40 @@ Build the production static web bundle:
 cd frontend
 npm run build
 ```
-The static files will be exported to the `out/` directory, ready to be pushed to GitHub Pages or static hostings.
+The static files will be compiled and prepared for distribution.
+
+---
+
+## 4. Interactive Testing Scenario
+
+To verify the live build and smart contract on GenLayer Bradbury Testnet, you can run a mock software delivery dispute using these copy-paste templates:
+
+### Step 1: File the Case
+Click **File Case** in the DApp header and submit these parameters:
+* **Dispute Title**: `Freelance React Chart Library Delivery Dispute`
+* **Agreement Terms**: `The developer must deliver a custom React charting component supporting SVG animations, responsive scaling, and compatibility with React 19 by June 20, 2026. Payment of 1,200 USDC is locked in escrow, to be released upon successful deployment and inspection of source code.`
+* **Claimant's Case Arguments**: `The developer delivered the library, but it uses React 18 legacy refs which crash when rendered in our React 19 environment. The layout is also broken on mobile screens, failing the responsive scaling requirement. We demand a full refund or refactor.`
+* **Respondent's Case Arguments**: `The chart library was delivered on time and works perfectly in standard React configurations. The client's React 19 issues are due to their custom build wrappers and Next.js settings, not our codebase. We completed the job and are entitled to the escrow payout.`
+
+### Step 2: Resolve the Case
+Find your case on the **Docket Board**, click **Resolve Case**, and paste these mock telemetry logs into the **Evidence** input field:
+
+```text
+-- TELEMETRY LOGS & DEPLOYMENT TELEMETRY --
+Timestamp: 2026-06-20T14:32:00Z
+Deployment URL: https://client-chart-test.vercel.app
+Runtime Environment: React 19.2.4, Next.js 16.2.9
+
+Error Console Output:
+[React] Error: Ref insertion failed: findDOMNode is deprecated in StrictMode and incompatible with React 19 fiber nodes.
+  at ChartContainer (webpack-internal:///./components/Chart.js:42:15)
+  at Div (native)
+
+Responsive Layout Telemetry:
+Screen Width: 375px (iPhone SE)
+Element overflow-x detected: canvas#chart-viewport (Width: 620px) 
+Constraint check: FAIL (Responsive width scaling failed)
+```
+
+Click **Submit for Deliberation** to sign the transaction. You can then watch the live equivalence and consensus stages update in real time as the decentralized AI validator jurors review the evidence, determine the final ruling, and compile the judicial rationale.
+
