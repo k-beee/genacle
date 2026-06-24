@@ -35,10 +35,22 @@ export function Header({ wallet, onOpen }: HeaderProps) {
           <div className="flex flex-wrap items-center gap-4">
             {/* Wallet Connector */}
             {wallet.address ? (
-              <div className="flex items-center border border-emerald-500/20 bg-emerald-950/15 rounded-md px-3 py-2 font-mono text-[10px] text-emerald-400">
-                <span className="h-1.5 w-1.5 bg-emerald-400 rounded-full animate-ping mr-2" />
-                {shortAddress(wallet.address)}
-              </div>
+              <button
+                type="button"
+                onClick={wallet.disconnect}
+                className="group relative flex items-center border border-emerald-500/20 bg-emerald-950/15 hover:border-red-500/30 hover:bg-red-950/10 rounded-md px-3 py-2 font-mono text-[10px] text-emerald-400 hover:text-red-400 transition-all duration-200 cursor-pointer"
+              >
+                {/* Default state */}
+                <span className="flex items-center group-hover:hidden">
+                  <span className="h-1.5 w-1.5 bg-emerald-400 rounded-full animate-ping mr-2" />
+                  {shortAddress(wallet.address)}
+                </span>
+                {/* Hover state */}
+                <span className="hidden group-hover:flex items-center">
+                  <span className="h-1.5 w-1.5 bg-red-400 rounded-full mr-2" />
+                  Disconnect
+                </span>
+              </button>
             ) : (
               <button
                 type="button"
