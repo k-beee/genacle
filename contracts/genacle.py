@@ -210,3 +210,40 @@ class Genacle(gl.Contract):
             "rationale": ruling["rationale"],
             "by": gl.message.sender_address.as_hex,
         }))
+
+    # ---- views -----------------------------------------------------------
+
+    @gl.public.view
+    def get_disputes(self, start: u256) -> list:
+        out = []
+        i = int(start)
+        n = len(self.dispute_ids)
+        while i < n and len(out) < PAGE:
+            out.append(json.loads(self.disputes[self.dispute_ids[i]]))
+            i += 1
+        return out
+
+    @gl.public.view
+    def get_dispute(self, dispute_id: str) -> dict:
+        if dispute_id not in self.disputes:
+            raise gl.vm.UserError(ERROR_EXPECTED + " Unknown dispute")
+        return json.loads(self.disputes[dispute_id])
+
+    @gl.public.view
+    def get_ledger(self, start: u256) -> list:
+        out = []
+        i = int(start)
+        n = len(self.ledger)
+        while i < n and len(out) < PAGE:
+            out.append(json.loads(self.ledger[i]))
+            i += 1
+        return out
+
+    @gl.public.view
+    def get_stats(self) -> dict:
+        return {
+            "disputes": int(self.total_disputes),
+            "resolved": int(self.total_resolved),
+            "claimant_wins": int(self.total_claimant_wins),
+            "owner": self.owner.as_hex,
+        }
