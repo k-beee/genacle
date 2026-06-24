@@ -166,3 +166,47 @@ class Genacle(gl.Contract):
             "by": gl.message.sender_address.as_hex,
         }))
         return dispute_id
+
+    @gl.public.write
+    def resolve_dispute(self, dispute_id: str, evidence: str) -> None:
+        if dispute_id not in self.disputes:
+            raise gl.vm.UserError(ERROR_EXPECTED + " Unknown dispute")
+        evidence = evidence.strip()
+        if not (1 <= len(evidence) <= MAX_EVIDENCE):
+            raise gl.vm.UserError(ERROR_EXPECTED + " Evidence must be 1-" + str(MAX_EVIDENCE) + " characters")
+        record = json.loads(self.disputes[dispute_id])
+        if record["status"] != "PENDING":
+            raise gl.vm.UserError(ERROR_EXPECTED + " Dispute is already resolved")
+
+        ruling = self._deliberate(
+            record["title"],
+            record["agreement"],
+            record["claimant_case"],
+            record["respondent_case"],
+            evidence,
+        )
+
+        decision = ruling["ruling"]
+        confidence = ruling["confidence"]
+        if decision == "DISMISSED" and confidence > 40:
+            confidence = 40
+
+        record["status"] = "RESOLVED"
+        record["ruling"] = decision
+        record["confidence"] = confidence
+        record["rationale"] = ruling["rationale"]
+        record["resolver"] = gl.message.sender_address.as_hex
+        self.disputes[dispute_id] = json.dumps(record)
+        
+        self.total_resolved += u256(1)
+        if decision == "CLAIMANT_WIN":
+            self.total_claimant_wins += u256(1)
+
+        self.ledger.append(json.dumps({
+            "id": dispute_id,
+            "event": "RESOLVED",
+            "ruling": decision,
+            "confidence": confidence,
+            "rationale": ruling["rationale"],
+            "by": gl.message.sender_address.as_hex,
+        }))
