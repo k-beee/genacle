@@ -2,7 +2,7 @@
 
 Genacle is a decentralized AI arbitration tribunal built entirely on-chain on GenLayer. It provides an autonomous legal protocol to resolve natural-language contract disputes through validator consensus, eliminating central intermediaries and escrow custody risks.
 
-Genacle is currently sitting live at [k-beee.github.io/genacle](https://k-beee.github.io/genacle/), reading and writing to contract [`0xd23D6E7688942FeB5e58aca3f5700b98921E5ACe`](https://explorer-bradbury.genlayer.com/address/0xd23D6E7688942FeB5e58aca3f5700b98921E5ACe) on GenLayer Bradbury.
+Genacle is currently sitting live at [genacle.vercel.app](https://genacle.vercel.app/), reading and writing to contract [`0xd23D6E7688942FeB5e58aca3f5700b98921E5ACe`](https://explorer-bradbury.genlayer.com/address/0xd23D6E7688942FeB5e58aca3f5700b98921E5ACe) on GenLayer Bradbury.
 
 ---
 
