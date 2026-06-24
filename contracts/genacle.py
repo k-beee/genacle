@@ -121,3 +121,48 @@ class Genacle(gl.Contract):
             return abs(a - b) <= max(20, (20 * max(a, b)) // 100)
 
         return gl.vm.run_nondet_unsafe(leader_fn, validator_fn)
+
+    # ---- writes ----------------------------------------------------------
+
+    @gl.public.write
+    def file_dispute(self, title: str, agreement: str, claimant_case: str, respondent_case: str) -> str:
+        title = title.strip()
+        agreement = agreement.strip()
+        claimant_case = claimant_case.strip()
+        respondent_case = respondent_case.strip()
+
+        if not (1 <= len(title) <= MAX_TITLE):
+            raise gl.vm.UserError(ERROR_EXPECTED + " Title must be 1-" + str(MAX_TITLE) + " characters")
+        if not (1 <= len(agreement) <= MAX_AGREEMENT):
+            raise gl.vm.UserError(ERROR_EXPECTED + " Agreement must be 1-" + str(MAX_AGREEMENT) + " characters")
+        if not (1 <= len(claimant_case) <= MAX_CLAIMANT_CASE):
+            raise gl.vm.UserError(ERROR_EXPECTED + " Claimant case must be 1-" + str(MAX_CLAIMANT_CASE) + " characters")
+        if not (1 <= len(respondent_case) <= MAX_RESPONDENT_CASE):
+            raise gl.vm.UserError(ERROR_EXPECTED + " Respondent case must be 1-" + str(MAX_RESPONDENT_CASE) + " characters")
+
+        self.seq += u256(1)
+        dispute_id = "dispute-" + str(int(self.seq))
+        record = {
+            "id": dispute_id,
+            "title": title,
+            "agreement": agreement,
+            "claimant_case": claimant_case,
+            "respondent_case": respondent_case,
+            "creator": gl.message.sender_address.as_hex,
+            "status": "PENDING",
+            "ruling": "",
+            "confidence": 0,
+            "rationale": "",
+            "resolver": "",
+            "index": int(self.seq),
+        }
+        self.disputes[dispute_id] = json.dumps(record)
+        self.dispute_ids.append(dispute_id)
+        self.total_disputes += u256(1)
+        self.ledger.append(json.dumps({
+            "id": dispute_id,
+            "event": "FILED",
+            "title": title,
+            "by": gl.message.sender_address.as_hex,
+        }))
+        return dispute_id
