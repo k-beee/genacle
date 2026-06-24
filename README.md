@@ -1,64 +1,93 @@
-# Genacle: Decentralized AI Arbitration Court
+# Genacle: The On-Chain Autonomous Court
 
-*An autonomous legal tribunal that lives entirely on-chain on GenLayer. Parties file disputes citing agreement terms and arguments; when evidence is submitted, a decentralized consensus of validator AI jurors resolves the case. No middlemen, no custody, network fees only.*
+Genacle is a decentralized AI arbitration tribunal built entirely on-chain on GenLayer. It provides an autonomous legal protocol to resolve natural-language contract disputes through validator consensus, eliminating central intermediaries and escrow custody risks.
 
-Genacle is sitting live at [k-beee.github.io/genacle](https://k-beee.github.io/genacle/), reading and writing to contract [`0xd23D6E…5ACe`](https://explorer-bradbury.genlayer.com/address/0xd23D6E7688942FeB5e58aca3f5700b98921E5ACe) on GenLayer Bradbury.
+Genacle is currently sitting live at [k-beee.github.io/genacle](https://k-beee.github.io/genacle/), reading and writing to contract [`0xd23D6E…5ACe`](https://explorer-bradbury.genlayer.com/address/0xd23D6E7688942FeB5e58aca3f5700b98921E5ACe) on GenLayer Bradbury.
 
 ---
 
-### Why does an arbitration court need a blockchain?
+## 1. Protocol Architecture & Workflow
 
-Because a legal tribunal is only as trustworthy as the consensus that resolves it. Standard Web2 servers resolving disputes operate as black boxes that must be trusted blindly. Genacle moves the resolution process entirely under consensus: a leader validator drafts the initial verdict, every other validator independently re-runs the deliberation prompt on their own LLMs, and only a verdict they agree on gets etched into state. This adversarial re-derivation is what GenLayer makes possible.
+Genacle operates as an autonomous dispute resolution lifecycle that transitions through four distinct phases:
 
-### How does Genacle's storage architecture work?
+```mermaid
+graph TD
+    A[1. Filing Case] -->|Etched PENDING status| B[2. Evidence Submission]
+    B -->|Trigger AI Deliberation| C[3. Consensus Deliberation]
+    C -->|Validator Equivalence Check| D[4. Sealed Verdict]
+    D -->|RESOLVED status & Counter Updates| E[Final Ledger Log]
+```
 
-The smart contract holds the complete court record and statistics in GenLayer state storage:
-* **Disputes Dossier**: A `TreeMap[str, str]` mapping auto-incremented dispute IDs to serialized JSON cases.
-* **Docket Index**: A parallel `DynArray[str]` storing insertion order for pagination.
-* **Telemetry Ledger**: A `DynArray[str]` logging critical events (e.g. `FILED`, `RESOLVED`).
-* **Statistics Counters**: `total_disputes`, `total_resolved`, and `total_claimant_wins` using `u256` so summary metrics never require high-gas loops.
+### I. Case Filing
+Either party files a new dispute by invoking `file_dispute(title, agreement, claimant_case, respondent_case)`. The contract validates input lengths, increments the sequence counter, sets the state to `PENDING`, and logs the action to the append-only event ledger.
 
-### How is a verdict reached under consensus?
+### II. Settlement Evidence
+When evidence becomes available (e.g. telemetry logs, code snippets, or API responses), anyone can submit it to `resolve_dispute(dispute_id, evidence)` to trigger the autonomous AI deliberation.
 
-Inside `_deliberate`, the leader packages the agreement, claimant arguments, respondent arguments, and evidence into an injection-resistant prompt. It instructs the LLM to output a strict JSON format mapping:
-`{"ruling": "CLAIMANT_WIN" | "RESPONDENT_WIN" | "DISMISSED", "confidence": 0-100, "rationale": "..."}`.
+### III. Consensus Deliberation
+A leader validator runs the evaluation prompt. Every other validator in the GenLayer network independently re-runs the prompt to verify the leader's proposed verdict, ensuring decentralized judgment.
 
-The leader's output is verified by validators in `validator_fn`:
-1. Rulings must match exactly (`CLAIMANT_WIN` vs `RESPONDENT_WIN`).
-2. Confidence score variance must fall within a math-based tolerance threshold (absolute difference is less than or equal to the larger of 20 points or 20% of the max confidence).
-3. Leaders returning malformed JSON or failed prompts are rotated out.
-4. After consensus, a post-consensus backstop caps `DISMISSED` confidence at 40 to protect against prompt injection or low-trust states.
+### IV. Sealed Verdict
+If validators reach consensus, the verdict (`CLAIMANT_WIN`, `RESPONDENT_WIN`, or `DISMISSED`) is etched on-chain, updating statistics, and the status changes to `RESOLVED`.
 
-### How does the frontend decode consensus in real-time?
+---
 
-The Next.js dashboard uses `genlayer-js` to poll transaction receipts during consensus. It extracts the leader's base64-encoded `eq_outputs` from the receipt (`consensus_data.leader_receipt.eq_outputs`), decodes it from base64, and parses the raw JSON. This allows the client UI to render a "deliberating draft verdict" preview live on screen before the validators finalize consensus.
+## 2. Technical Specification
 
-### How to run and deploy locally?
+### Smart Contract (`contracts/genacle.py`)
+The tribunal state is managed using GenLayer storage structures optimized to prevent high-gas loops:
+* **disputes**: A `TreeMap[str, str]` storing serialized JSON case records keyed by a sequence ID.
+* **dispute_ids**: A parallel `DynArray[str]` storing insertion order for paginated view methods.
+* **ledger**: An append-only `DynArray[str]` logging historical court actions.
+* **Global Statistics**: `total_disputes`, `total_resolved`, and `total_claimant_wins` tracked as `u256` integers to avoid state scans.
 
-1. **Lint and Test the Contract**:
-   ```bash
-   pip install genvm-linter genlayer-test
-   genvm-lint check contracts/genacle.py
-   gltest tests/integration/ -v -s --network studionet
-   ```
+### Validator Consensus & Equivalence Rules
+AI execution variance is governed inside `validator_fn` using the Equivalence Principle:
+1. **Ruling Equivalence**: Rulings must match exactly (`CLAIMANT_WIN`, `RESPONDENT_WIN`, or `DISMISSED`).
+2. **Confidence Tolerance**: Validator confidence scores must agree within a custom tolerance range:
+   $$\text{Difference} \le \max(20, \frac{20 \times \max(a, b)}{100})$$
+3. **Error Alignment**: Expected user errors align under consensus; formatting or LLM failures trigger leader rotation.
+4. **Deterministic Backstop**: If a dispute is `DISMISSED`, its confidence is capped at `40%` post-consensus to protect the state against prompt injection or low-trust evidence.
 
-2. **Run the Frontend**:
-   ```bash
-   cd frontend
-   npm install --legacy-peer-deps
-   npm run dev
-   ```
+### Real-Time Telemetry Decoding
+The frontend polls transaction receipts and decodes the leader's base64-encoded `eq_outputs` from the consensus receipt (`consensus_data.leader_receipt.eq_outputs`). This allows the client to display the leader's draft ruling live on screen while validators are still reviewing and sealing the block.
 
-3. **Deploy to Bradbury Testnet**:
-   Define `GENLAYER_PRIVATE_KEY` in a root `.env` file (see `.env.example`), then deploy and verify:
-   ```bash
-   python scripts/deploy.py
-   python scripts/verify_read.py
-   python scripts/verify_write.py
-   ```
+---
 
-4. **Static Export**:
-   Build the static export of the frontend:
-   ```bash
-   cd frontend && npm run build
-   ```
+## 3. Developer & Commands Manual
+
+### Contract Quality Control
+Run linter checks and local integration tests:
+```bash
+# Verify contract storage structure
+genvm-lint check contracts/genacle.py
+
+# Execute local simulated integration tests
+gltest tests/integration/ -v -s --network studionet
+```
+
+### Local Frontend Hosting
+Launch the Next.js development server:
+```bash
+cd frontend
+npm install --legacy-peer-deps
+npm run dev
+```
+
+### Bradbury Testnet Operations
+Deploy to the live Bradbury testnet:
+```bash
+# 1. Define private key in .env (template in .env.example)
+# 2. Run deployment scripts
+python scripts/deploy.py
+python scripts/verify_read.py
+python scripts/verify_write.py
+```
+
+### Static Export Compilation
+Build the production static web bundle:
+```bash
+cd frontend
+npm run build
+```
+The static files will be exported to the `out/` directory, ready to be pushed to GitHub Pages or static hostings.
