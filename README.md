@@ -1,4 +1,4 @@
-# Genacle: The On-Chain Autonomous Court
+# Genacle: The OnChain Autonomous Court
 
 Genacle is a decentralized AI arbitration tribunal built entirely on-chain on GenLayer. It provides an autonomous legal protocol to resolve natural-language contract disputes through validator consensus, eliminating central intermediaries and escrow custody risks.
 
